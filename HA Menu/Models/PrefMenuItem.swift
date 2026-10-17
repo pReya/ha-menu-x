@@ -11,6 +11,7 @@ import Foundation
 enum itemTypes: String, Codable {
     case Domain = "Domain"
     case Group = "Group"
+    case Area = "Area"
 }
 
 struct PrefMenuItem : Codable {
@@ -23,5 +24,10 @@ struct PrefMenuItem : Codable {
 
     private enum CodingKeys: String, CodingKey {
         case entityId, friendlyName, itemType, subMenu, enabled
+    }
+
+    // Unique across item types (a group and an area can share the same id)
+    var orderKey: String {
+        return "\(itemType.rawValue):\(entityId)"
     }
 }

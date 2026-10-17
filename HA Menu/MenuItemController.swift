@@ -158,29 +158,33 @@ final class MenuItemController: NSObject, NSMenuDelegate {
     }
 
     func addDynamicMenuItems(completionHandler: @escaping (Result<Bool, HaService.HaServiceApiError>) -> Void) {
-        haService.getStates() {
+        // Areas need an extra request, only load them when they are shown
+        let includeAreas = prefs.menuItems.contains(where: {$0.itemType == itemTypes.Area && $0.enabled})
+
+        haService.getStates(includeAreas: includeAreas) {
             result in
             switch result {
             case .success( _):
 
-                self.menuItems.removeAll()
-
                 self.groups = self.haService.filterEntities(entityDomain: EntityDomains.groupDomain.rawValue).reversed()
 
-                let menuItemsWithFriendlyNames = self.prefs.menuItemsWithFriendlyNames(groups: self.groups)
-
-                let sortedMenuItemsWithFriendlyNames = menuItemsWithFriendlyNames.sorted { $0.value.index < $1.value.index }
-
-                for (_, value) in sortedMenuItemsWithFriendlyNames {
-                    self.menuItems.insert(value, at: 0)
-                }
+                // Items are inserted at the top of the menu one after another, so add them in reverse
+                self.menuItems = self.prefs.menuItemsWithFriendlyNames(groups: self.groups, areas: self.haService.haAreas).reversed()
 
                 // Add Menu Items
                 var nextRequiresSeparator = true
+                var areasMissing = false
                 for menuItem in self.menuItems {
+                    if menuItem.itemType == itemTypes.Area && self.haService.haAreas == nil {
+                        areasMissing = areasMissing || menuItem.enabled
+                        continue
+                    }
                     if menuItem.enabled {
                         nextRequiresSeparator = self.addMenuItem(menuItem: menuItem, requiresSeparator: nextRequiresSeparator)
                     }
+                }
+                if areasMissing {
+                    self.addErrorMenuItem(message: "Unable to load areas")
                 }
                 self.addHiddenEntitiesMenuItem()
                 completionHandler(.success(true))
@@ -209,99 +213,16 @@ final class MenuItemController: NSObject, NSMenuDelegate {
     }
 
     func addMenuItem(menuItem: PrefMenuItem, requiresSeparator: Bool) -> Bool {
-        var nextRequiresSeparator = false
-
-        switch menuItem.itemType {
-        case itemTypes.Domain:
-            let domainItems = self.haService.filterEntities(entityDomain: menuItem.entityId)
-            self.addMenuItem(menuItem: menuItem, entities: domainItems, requiresSeparator: requiresSeparator)
-
-            nextRequiresSeparator = !menuItem.subMenu
-
-        case itemTypes.Group:
-            self.haService.getState(entityId: "group.\(menuItem.entityId)") { result in
-                switch result {
-                case .success(let group):
-                    // For each entity, get it's attributes and if available add to array
-                    var entities = [HaEntity]()
-
-                    for entityId in (group.attributes.entityIds) {
-
-                        let entityType = entityId.components(separatedBy: ".")[0]
-                        var itemType: EntityTypes?
-
-                        switch entityType {
-                        case "switch":
-                            itemType = EntityTypes.switchType
-                        case "light":
-                            itemType = EntityTypes.lightType
-                        case "input_boolean":
-                            itemType = EntityTypes.inputBooleanType
-                        case "input_select":
-                            itemType = EntityTypes.inputSelectType
-                        case "automation":
-                            itemType = EntityTypes.automationType
-                        case "scene":
-                            itemType = EntityTypes.sceneType
-                        case "script":
-                            itemType = EntityTypes.scriptType
-                        case "sensor":
-                            itemType = EntityTypes.sensorType
-                        case "cover":
-                            itemType = EntityTypes.coverType
-                        case "button":
-                            itemType = EntityTypes.buttonType
-                        case "input_button":
-                            itemType = EntityTypes.inputButtonType
-                            
-                        default:
-                            itemType = nil
-                        }
-
-                        if itemType != nil {
-
-                            self.haService.getState(entityId: entityId) { result in
-                                switch result {
-                                case .success(let entity):
-                                    var options = [String]()
-                                    var unitOfMeasurement = ""
-
-                                    if itemType == EntityTypes.inputSelectType {
-                                        options = entity.attributes.options
-                                    }
-
-                                    if itemType == EntityTypes.sensorType {
-                                        unitOfMeasurement = entity.attributes.unitOfMeasurement
-                                    }
-                                    
-                                    // Do not add unavailable state entities or ones the user has hidden
-                                    if (entity.state != "unavailable" && !self.prefs.hiddenEntities.contains(entityId)) {
-
-                                        let haEntity: HaEntity = HaEntity(entityId: entityId, friendlyName: (entity.attributes.friendlyName), state: (entity.state), unitOfMeasurement: unitOfMeasurement, options: options)
-
-                                        entities.append(haEntity)
-                                    }
-                                case .failure( _):
-                                    break
-                                }
-                            }
-                        }
-                    }
-
-                    entities = entities.reversed()
-
-                    self.addMenuItem(menuItem: menuItem, entities: entities, requiresSeparator: requiresSeparator)
-
-                    nextRequiresSeparator = !menuItem.subMenu
-
-                    break
-                case .failure( _):
-                    self.addErrorMenuItem(message: "Group not found")
-                }
-            }
+        if menuItem.itemType == itemTypes.Group && !haService.haStates.contains(where: {$0.entityId == "group.\(menuItem.entityId)"}) {
+            self.addErrorMenuItem(message: "Group not found")
+            return false
         }
 
-        return nextRequiresSeparator
+        // Entities are inserted at the top of the menu one after another, so add them in reverse
+        let entities = self.haService.entities(for: menuItem)
+        self.addMenuItem(menuItem: menuItem, entities: entities.reversed(), requiresSeparator: requiresSeparator)
+
+        return !menuItem.subMenu
     }
 
     func addMenuItem(menuItem: PrefMenuItem, entities: [HaEntity], requiresSeparator: Bool) {

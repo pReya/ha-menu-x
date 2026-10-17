@@ -35,7 +35,7 @@ For the server connection you can use your local ip:port as per the example, an 
 To create a token within HA, login to HA and click on your profile.  
 Under Long Lived Access Tokens, create a new token, give it a name and copy the token value into HA Menu preferences.
 
-Press Connect to validate your connection and get your groups.  You can now choose which domains/groups to display within HA Menu, drag them to reorder and optionally make them a submenu.
+Press Connect to validate your connection and get your groups and areas.  You can now choose which domains/groups/areas to display within HA Menu, drag them to reorder and optionally make them a submenu. Double-click one to sort the entities within it.
 
 ![alt text](Art/preferences.png "Preferences")
 
@@ -48,7 +48,18 @@ Entities within domains are displayed alphabetically.
 ### Hiding entities
 
 To hide a single entity, open HA Menu and hold the Option (⌥) key, each entity turns into a Hide item, click it to hide that entity.  
-Hidden entities are removed from both domains and groups and are listed in the Hidden Entities submenu below Preferences, click one there to show it again.
+Hidden entities are removed from domains, groups and areas and are listed in the Hidden Entities submenu below Preferences, click one there to show it again.
+
+### Areas (rooms)
+
+The areas you have set up in HA are listed in preferences alongside domains and groups, in the order HA has them. Tick an area to show its entities, by default as a submenu named after the room.  
+An entity belongs to an area when it is assigned to it directly or when its device is. Like HA's own area views, hidden entities and config/diagnostic entities are left out, as are sensors (add sensors to a group if you want to see them).  
+When an entity's name starts with the area name it is shortened, e.g. "Kitchen Ceiling Light" is shown as "Ceiling Light" within Kitchen.
+
+### Sorting items
+
+Double-click a domain, group or area in preferences (or right-click it and choose Sort Items…) to drag its entities into the order you want them in the menu.  
+Entities added to HA later are appended at the end. Reset to A–Z (or Reset to Group Order for groups) restores the default order.
 
 ### Groups
 

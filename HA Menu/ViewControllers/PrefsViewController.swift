@@ -38,7 +38,12 @@ class PrefsViewController: NSViewController {
         tableViewGroups.dataSource = self
         tableViewGroups.registerForDraggedTypes([dragDropType])
         tableViewGroups.target = self
-//        tableViewGroups.doubleAction = #selector(tableViewGroupsDoubleClick(_:))
+        tableViewGroups.doubleAction = #selector(tableViewGroupsDoubleClick(_:))
+        tableViewGroups.toolTip = "Drag to reorder, double-click to sort the items within"
+
+        let contextMenu = NSMenu()
+        contextMenu.addItem(NSMenuItem(title: "Sort Items…", action: #selector(sortItemsFromContextMenu(_:)), keyEquivalent: ""))
+        tableViewGroups.menu = contextMenu
 
         connect()
     }
@@ -55,23 +60,21 @@ class PrefsViewController: NSViewController {
 
         self.menuItems.removeAll()
         
-        haService.getStates() {
+        haService.getStates(includeAreas: true) {
             result in
             switch result {
             case .success( _):
                 DispatchQueue.main.async {
                     self.okToSaveMenuItems = true
-                    self.textfieldStatus.stringValue = "Connected"
+                    if let areasError = self.haService.areasError {
+                        self.textfieldStatus.stringValue = "Connected, but unable to load areas (\(self.describe(areasError)))"
+                    } else {
+                        self.textfieldStatus.stringValue = "Connected"
+                    }
 
                     self.groups = self.haService.filterEntities(entityDomain: EntityDomains.groupDomain.rawValue).reversed()
 
-                    let menuItemsWithFriendlyNames = self.prefs.menuItemsWithFriendlyNames(groups: self.groups)
-
-                    let sortedMenuItemsWithFriendlyNames = menuItemsWithFriendlyNames.sorted { $0.value.index < $1.value.index }
-
-                    for (_, value) in sortedMenuItemsWithFriendlyNames {
-                        self.menuItems.append(value)
-                    }
+                    self.menuItems = self.prefs.menuItemsWithFriendlyNames(groups: self.groups, areas: self.haService.haAreas)
 
                     self.tableViewGroups.reloadData()
                 }
@@ -128,14 +131,38 @@ class PrefsViewController: NSViewController {
         }
     }
 
-//    @objc func tableViewGroupsDoubleClick(_ sender:AnyObject) {
-//
-//        guard tableViewGroups.selectedRow >= 0 else {
-//            return
-//        }
-//
-//        let item = self.menuItems[tableViewGroups.selectedRow]
-//    }
+    func describe(_ error: HaService.HaServiceApiError) -> String {
+        switch error {
+        case .Unauthorized:
+            return "unauthorized"
+        case .InvalidURL, .URLMissing:
+            return "invalid URL"
+        case .UnknownError(let message):
+            return message
+        default:
+            return "unexpected response"
+        }
+    }
+
+    @objc func tableViewGroupsDoubleClick(_ sender: AnyObject) {
+        showEntityOrder(row: tableViewGroups.clickedRow)
+    }
+
+    @objc func sortItemsFromContextMenu(_ sender: NSMenuItem) {
+        showEntityOrder(row: tableViewGroups.clickedRow)
+    }
+
+    func showEntityOrder(row: Int) {
+        guard okToSaveMenuItems, row >= 0, row < menuItems.count else {
+            return
+        }
+
+        let item = menuItems[row]
+        let orderViewController = EntityOrderViewController(menuItem: item,
+                                                            entities: haService.entities(for: item),
+                                                            defaultEntities: haService.defaultEntities(for: item))
+        presentAsSheet(orderViewController)
+    }
 
 }
 
@@ -241,4 +268,159 @@ extension PrefsViewController: NSTableViewDelegate, NSTableViewDataSource {
         return true
     }
 
+}
+
+// Sheet to drag the entities of one domain, group or area into a custom order
+final class EntityOrderViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
+
+    private let menuItem: PrefMenuItem
+    private var entities: [HaEntity]
+    private let defaultEntities: [HaEntity]
+    private let tableView = NSTableView()
+    private let dragDropType = NSPasteboard.PasteboardType(rawValue: "private.entity-row")
+    private var prefs = Preferences()
+
+    init(menuItem: PrefMenuItem, entities: [HaEntity], defaultEntities: [HaEntity]) {
+        self.menuItem = menuItem
+        self.entities = entities
+        self.defaultEntities = defaultEntities
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func loadView() {
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 380, height: 440))
+
+        let title = NSTextField(labelWithString: "Sort \(menuItem.friendlyName)")
+        title.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+
+        let hint = NSTextField(labelWithString: entities.isEmpty ? "There are no items to sort." : "Drag items into the order they should appear in the menu.")
+        hint.textColor = .secondaryLabelColor
+
+        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("Entity"))
+        column.resizingMask = .autoresizingMask
+        tableView.addTableColumn(column)
+        tableView.headerView = nil
+        tableView.usesAlternatingRowBackgroundColors = true
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.registerForDraggedTypes([dragDropType])
+        tableView.draggingDestinationFeedbackStyle = .gap
+
+        let scrollView = NSScrollView()
+        scrollView.documentView = tableView
+        scrollView.hasVerticalScroller = true
+        scrollView.borderType = .bezelBorder
+
+        let resetButton = NSButton(title: defaultOrderTitle(), target: self, action: #selector(resetOrder(_:)))
+        let doneButton = NSButton(title: "Done", target: self, action: #selector(done(_:)))
+        doneButton.keyEquivalent = "\r"
+
+        for subview in [title, hint, scrollView, resetButton, doneButton] {
+            subview.translatesAutoresizingMaskIntoConstraints = false
+            container.addSubview(subview)
+        }
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: container.topAnchor, constant: 20),
+            title.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
+            title.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -20),
+
+            hint.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 4),
+            hint.leadingAnchor.constraint(equalTo: title.leadingAnchor),
+            hint.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -20),
+
+            scrollView.topAnchor.constraint(equalTo: hint.bottomAnchor, constant: 12),
+            scrollView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
+            scrollView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
+            scrollView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200),
+
+            resetButton.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 16),
+            resetButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            resetButton.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -20),
+
+            doneButton.centerYAnchor.constraint(equalTo: resetButton.centerYAnchor),
+            doneButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            doneButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
+        ])
+
+        view = container
+    }
+
+    private func defaultOrderTitle() -> String {
+        return menuItem.itemType == itemTypes.Group ? "Reset to Group Order" : "Reset to A–Z"
+    }
+
+    @objc func resetOrder(_ sender: NSButton) {
+        entities = defaultEntities
+        tableView.reloadData()
+    }
+
+    @objc func done(_ sender: NSButton) {
+        let entityIds = entities.map { $0.entityId }
+
+        // Only keep an order when it differs from the default, so new entities keep falling into place
+        if entityIds == defaultEntities.map({ $0.entityId }) {
+            prefs.setEntityOrder([], for: menuItem.orderKey)
+        } else {
+            prefs.setEntityOrder(entityIds, for: menuItem.orderKey)
+        }
+
+        dismiss(self)
+    }
+
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        return entities.count
+    }
+
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let identifier = NSUserInterfaceItemIdentifier("EntityCell")
+        let cell = tableView.makeView(withIdentifier: identifier, owner: self) as? NSTableCellView ?? {
+            let cell = NSTableCellView()
+            cell.identifier = identifier
+            let textField = NSTextField(labelWithString: "")
+            textField.lineBreakMode = .byTruncatingTail
+            textField.translatesAutoresizingMaskIntoConstraints = false
+            cell.addSubview(textField)
+            cell.textField = textField
+            NSLayoutConstraint.activate([
+                textField.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 4),
+                textField.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -4),
+                textField.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+            ])
+            return cell
+        }()
+
+        let entity = entities[row]
+        cell.textField?.stringValue = entity.friendlyName
+        cell.toolTip = entity.entityId
+        return cell
+    }
+
+    func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
+        let item = NSPasteboardItem()
+        item.setString(String(row), forType: dragDropType)
+        return item
+    }
+
+    func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        return dropOperation == .above ? .move : []
+    }
+
+    func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
+        guard let item = info.draggingPasteboard.pasteboardItems?.first,
+              let string = item.string(forType: dragDropType),
+              let oldIndex = Int(string), oldIndex < entities.count else {
+            return false
+        }
+
+        let entity = entities.remove(at: oldIndex)
+        entities.insert(entity, at: oldIndex < row ? row - 1 : row)
+
+        tableView.reloadData()
+        return true
+    }
 }

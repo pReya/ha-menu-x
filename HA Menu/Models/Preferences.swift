@@ -316,42 +316,79 @@ struct Preferences {
         return foundDomain
     }
 
-    func menuItemsWithFriendlyNames(groups: [HaEntity]) -> [String: PrefMenuItem] {
-        var completedItems = [String: PrefMenuItem]()
-
-        var index = 0
+    // Returns the stored menu items in display order with current friendly names,
+    // dropping groups/areas that no longer exist and appending new ones (disabled).
+    // Pass areas as nil when they could not be loaded, stored area items are then kept as they are.
+    func menuItemsWithFriendlyNames(groups: [HaEntity], areas: [HaArea]?) -> [PrefMenuItem] {
+        var completedItems = [PrefMenuItem]()
+        var seenKeys = Set<String>()
 
         for item in menuItems {
+            var completedItem = item
 
-            if item.itemType == itemTypes.Group {
+            switch item.itemType {
+            case itemTypes.Group:
                 // Check if still a group
-                if let group = getGroup(groups: groups, entityId: "group." + item.entityId) {
-                    index+=1
-
-                    let completedItem = PrefMenuItem(entityId: item.entityId, itemType: item.itemType, subMenu: item.subMenu, enabled: item.enabled, friendlyName: group.friendlyName, index: index)
-
-                    completedItems[completedItem.entityId] = completedItem
+                guard let group = getGroup(groups: groups, entityId: "group." + item.entityId) else {
+                    continue
                 }
+                completedItem.friendlyName = group.friendlyName
+            case itemTypes.Area:
+                if let areas = areas {
+                    // Check if still an area
+                    guard let area = areas.first(where: {$0.id == item.entityId}) else {
+                        continue
+                    }
+                    completedItem.friendlyName = area.name
+                }
+            case itemTypes.Domain:
+                break
             }
-            else {
-                index+=1
-                var domainItem = item
-                domainItem.index = index
-                completedItems[item.entityId] = domainItem
+
+            if seenKeys.insert(completedItem.orderKey).inserted {
+                completedItems.append(completedItem)
             }
         }
 
         // Add missing groups
         for group in groups {
-            if completedItems[group.entityIdNoPrefix] == nil {
-                index+=1
-                let completedItem = PrefMenuItem(entityId: group.entityIdNoPrefix, itemType: itemTypes.Group, subMenu: false, enabled: false, friendlyName: group.friendlyName, index: index)
-
-                completedItems[group.entityIdNoPrefix] = completedItem
+            let item = PrefMenuItem(entityId: group.entityIdNoPrefix, itemType: itemTypes.Group, subMenu: false, enabled: false, friendlyName: group.friendlyName)
+            if seenKeys.insert(item.orderKey).inserted {
+                completedItems.append(item)
             }
         }
 
+        // Add missing areas, as submenus since they are usually used as rooms
+        for area in areas ?? [] {
+            let item = PrefMenuItem(entityId: area.id, itemType: itemTypes.Area, subMenu: true, enabled: false, friendlyName: area.name)
+            if seenKeys.insert(item.orderKey).inserted {
+                completedItems.append(item)
+            }
+        }
+
+        for index in completedItems.indices {
+            completedItems[index].index = index + 1
+        }
+
         return completedItems
+    }
+
+    // Custom order of entities within a menu item (domain, group or area), keyed by PrefMenuItem.orderKey.
+    // Empty means the default order.
+    func entityOrder(for key: String) -> [String] {
+        let orders = UserDefaults.standard.dictionary(forKey: "entity_order") as? [String: [String]] ?? [:]
+        return orders[key] ?? []
+    }
+
+    func setEntityOrder(_ entityIds: [String], for key: String) {
+        var orders = UserDefaults.standard.dictionary(forKey: "entity_order") as? [String: [String]] ?? [:]
+        if entityIds.isEmpty {
+            orders.removeValue(forKey: key)
+        } else {
+            orders[key] = entityIds
+        }
+        UserDefaults.standard.set(orders, forKey: "entity_order")
+        UserDefaults.standard.synchronize()
     }
 
     private func getGroup(groups: [HaEntity], entityId: String) -> HaEntity? {
