@@ -687,7 +687,7 @@
                 <windowController storyboardIdentifier="PrefsWindowController" showSeguePresentationStyle="single" id="5vR-qe-8Wv" userLabel="Preferences Window Controller" sceneMemberID="viewController">
                     <window key="window" identifier="PrefsWindowController" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="99g-Ib-SeE">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-                        <rect key="contentRect" x="245" y="301" width="425" height="425"/>
+                        <rect key="contentRect" x="245" y="301" width="425" height="437"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <connections>
                             <outlet property="delegate" destination="5vR-qe-8Wv" id="GKJ-fo-9sp"/>
@@ -869,7 +869,7 @@
                             <constraint firstItem="bzu-iR-vUe" firstAttribute="leading" relation="lessThanOrEqual" secondItem="0wc-Hy-MC4" secondAttribute="trailing" constant="266" id="sAR-SO-Ewq"/>
                             <constraint firstItem="0wc-Hy-MC4" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="20" id="uVa-bO-Oih"/>
                             <constraint firstItem="axF-OX-WUt" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="20" id="vND-ld-nML"/>
-                            <constraint firstItem="sDh-nR-2un" firstAttribute="top" secondItem="0wc-Hy-MC4" secondAttribute="bottom" constant="8" id="vSB-sd-Kmy"/>
+                            <constraint firstItem="sDh-nR-2un" firstAttribute="top" secondItem="0wc-Hy-MC4" secondAttribute="bottom" constant="20" id="vSB-sd-Kmy"/>
                             <constraint firstItem="sDh-nR-2un" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="20" id="wtY-zJ-ja6"/>
                             <constraint firstItem="xLm-S0-5hb" firstAttribute="leading" secondItem="s4S-Br-111" secondAttribute="trailing" constant="20" id="yK2-em-TO2"/>
                             <constraint firstItem="axF-OX-WUt" firstAttribute="top" secondItem="Sv8-cb-OH4" secondAttribute="bottom" constant="12" id="zn9-EB-0UR"/>
