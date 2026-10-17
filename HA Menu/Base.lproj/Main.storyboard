@@ -829,13 +829,6 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sv8-cb-OH4">
-                                <rect key="frame" x="18" y="39" width="387" height="18"/>
-                                <buttonCell key="cell" type="check" title="Show beta version notifications" bezelStyle="regularSquare" imagePosition="left" inset="2" id="MrG-7X-nxL">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="s4S-Br-111">
                                 <rect key="frame" x="18" y="395" width="44" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Token" id="bQV-gm-Oxx">
@@ -850,7 +843,6 @@
                             <constraint firstAttribute="trailing" secondItem="axF-OX-WUt" secondAttribute="trailing" constant="20" id="3O8-lx-vmR"/>
                             <constraint firstItem="bzu-iR-vUe" firstAttribute="top" secondItem="xLm-S0-5hb" secondAttribute="bottom" constant="10" id="5ZP-mQ-ac7"/>
                             <constraint firstItem="s4S-Br-111" firstAttribute="top" secondItem="d6B-OZ-GYv" secondAttribute="bottom" constant="23" id="8cM-j8-VqT"/>
-                            <constraint firstItem="Sv8-cb-OH4" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="20" id="99K-h2-pYk"/>
                             <constraint firstItem="cJg-XY-9A6" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="80" id="9Vl-lw-U6K"/>
                             <constraint firstItem="d6B-OZ-GYv" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="20" id="EnX-3J-8D4"/>
                             <constraint firstItem="0wc-Hy-MC4" firstAttribute="top" secondItem="xLm-S0-5hb" secondAttribute="bottom" constant="12" id="Gnz-5Q-1vQ"/>
@@ -860,9 +852,7 @@
                             <constraint firstAttribute="trailing" secondItem="sDh-nR-2un" secondAttribute="trailing" constant="20" id="THJ-V9-Tc1"/>
                             <constraint firstAttribute="trailing" secondItem="cJg-XY-9A6" secondAttribute="trailing" constant="20" id="W42-Qg-lQY"/>
                             <constraint firstAttribute="trailing" secondItem="xLm-S0-5hb" secondAttribute="trailing" constant="20" id="WAD-wr-kZD"/>
-                            <constraint firstAttribute="trailing" secondItem="Sv8-cb-OH4" secondAttribute="trailing" constant="20" id="Wjc-IB-aRo"/>
                             <constraint firstItem="d6B-OZ-GYv" firstAttribute="firstBaseline" secondItem="cJg-XY-9A6" secondAttribute="firstBaseline" id="a0P-rV-MdY"/>
-                            <constraint firstItem="Sv8-cb-OH4" firstAttribute="top" secondItem="sDh-nR-2un" secondAttribute="bottom" constant="8" id="ikt-f8-guF"/>
                             <constraint firstItem="cJg-XY-9A6" firstAttribute="leading" secondItem="d6B-OZ-GYv" secondAttribute="trailing" constant="20" id="juI-gq-CI6"/>
                             <constraint firstItem="d6B-OZ-GYv" firstAttribute="top" secondItem="R2d-cY-rAO" secondAttribute="top" constant="20" id="lSH-AZ-EQh"/>
                             <constraint firstItem="xLm-S0-5hb" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="80" id="mlv-fV-Os6"/>
@@ -872,11 +862,10 @@
                             <constraint firstItem="sDh-nR-2un" firstAttribute="top" secondItem="0wc-Hy-MC4" secondAttribute="bottom" constant="20" id="vSB-sd-Kmy"/>
                             <constraint firstItem="sDh-nR-2un" firstAttribute="leading" secondItem="R2d-cY-rAO" secondAttribute="leading" constant="20" id="wtY-zJ-ja6"/>
                             <constraint firstItem="xLm-S0-5hb" firstAttribute="leading" secondItem="s4S-Br-111" secondAttribute="trailing" constant="20" id="yK2-em-TO2"/>
-                            <constraint firstItem="axF-OX-WUt" firstAttribute="top" secondItem="Sv8-cb-OH4" secondAttribute="bottom" constant="12" id="zn9-EB-0UR"/>
+                            <constraint firstItem="axF-OX-WUt" firstAttribute="top" secondItem="sDh-nR-2un" secondAttribute="bottom" constant="12" id="zn9-EB-0UR"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="buttonBetaNotifications" destination="Sv8-cb-OH4" id="ly4-Vu-fZ4"/>
                         <outlet property="buttonLogin" destination="axF-OX-WUt" id="stJ-dK-ClI"/>
                         <outlet property="tableViewGroups" destination="Gml-eL-0ch" id="ZlB-21-qE5"/>
                         <outlet property="textfieldServer" destination="cJg-XY-9A6" id="Rc7-3o-x0J"/>

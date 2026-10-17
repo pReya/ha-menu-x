@@ -57,8 +57,7 @@ extension AppDelegate {
                "domain_scripts": true,
                "domain_covers": true,
                "domain_buttons": true,
-               "domain_inputbuttons": true,
-               "betaNotifications": false
+               "domain_inputbuttons": true
                ])
 
         let notificationName = Notification.Name(rawValue: "PrefsChanged")

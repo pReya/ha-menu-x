@@ -30,8 +30,8 @@ final class MenuItemController: NSObject, NSMenuDelegate {
     let menuItemTypeHidden = 998
     let menuItemTypeError = 999
 
-    let releasesFeedURL = URL(string: "https://hamenu-releases-atom.codechimp.org")!
-    let releasesURL = URL(string: "https://hamenu-releases.codechimp.org")!
+    let releasesFeedURL = URL(string: "https://github.com/pReya/ha-menu-x/releases.atom")!
+    let releasesURL = URL(string: "https://github.com/pReya/ha-menu-x/releases")!
     
     override init() {
         preferences = Preferences()
@@ -489,6 +489,13 @@ final class MenuItemController: NSObject, NSMenuDelegate {
         prefs.hiddenEntities = prefs.hiddenEntities.filter({$0 != entityId})
     }
 
+    // Compares versions numerically (3.0.10 is newer than 3.0.9), a leading "v" in the tag is ignored.
+    // Only newer releases are offered, so a local build ahead of the latest release is not asked to downgrade.
+    func isVersion(_ version: String, newerThan currentVersion: String) -> Bool {
+        let cleanVersion = version.hasPrefix("v") ? String(version.dropFirst()) : version
+        return cleanVersion.compare(currentVersion, options: .numeric) == .orderedDescending
+    }
+
     func checkForUpdate() {
         let parser = FeedParser(URL: releasesFeedURL)
 
@@ -497,39 +504,22 @@ final class MenuItemController: NSObject, NSMenuDelegate {
             switch result {
             case .success(let feed):
 
-                if let latestId = (feed.atomFeed?.entries?.first?.id!) {
-                    let idArray = latestId.components(separatedBy: "/")
-                    var latestVersion = idArray.last
+                // The feed's entry ids end with the release tag. Beta releases are never offered,
+                // the newest release that is not a beta counts.
+                let tags = (feed.atomFeed?.entries ?? []).compactMap { $0.id?.components(separatedBy: "/").last }
+
+                if let latestVersion = tags.first(where: { !$0.hasSuffix("beta") }) {
 
                     // Do nothing with final builds, they are pulled manually when required
-                    if (latestVersion?.hasSuffix("final"))! {
+                    if latestVersion.hasSuffix("final") {
                         return
-                    }
-
-                    // If the version has suffix of beta, strip suffix for later comparison and flag as beta
-                    var beta = false
-                    if (latestVersion?.hasSuffix("beta"))! {
-                        beta = true
-                        if (!self.prefs.betaNotifications) {
-                            return
-                        }
-
-                        latestVersion = String(latestVersion!.dropLast(4))
                     }
 
                     let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
 
-                    if (latestVersion != appVersion) {
+                    if self.isVersion(latestVersion, newerThan: appVersion) {
                         DispatchQueue.main.async {
-                            var title: String
-                            if beta {
-                                title = "A new beta version is available"
-                            }
-                            else
-                            {
-                                title = "A new version is available"
-                            }
-                            let menuItem = NSMenuItem(title: title, action: #selector(self.openAppWebsite(sender:)), keyEquivalent: "")
+                            let menuItem = NSMenuItem(title: "A new version is available", action: #selector(self.openAppWebsite(sender:)), keyEquivalent: "")
                             menuItem.target = self
 
                             menuItem.tag = self.menuItemTypeInfo // Tag defines what type of item it is
