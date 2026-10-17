@@ -17,10 +17,6 @@
 		49A5D39B246AD76100F81FAA /* RELEASING.md in Resources */ = {isa = PBXBuildFile; fileRef = 49A5D39A246AD76100F81FAA /* RELEASING.md */; };
 		49BDE9D9237D75700087F729 /* HaEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BDE9D8237D75700087F729 /* HaEntity.swift */; };
 		49BDE9DC237DA0FA0087F729 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49BDE9DB237DA0FA0087F729 /* ServiceManagement.framework */; };
-		49BDE9E4237DA1580087F729 /* LauncherAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BDE9E3237DA1580087F729 /* LauncherAppDelegate.swift */; };
-		49BDE9E8237DA15A0087F729 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49BDE9E7237DA15A0087F729 /* Assets.xcassets */; };
-		49BDE9EB237DA15B0087F729 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49BDE9E9237DA15A0087F729 /* Main.storyboard */; };
-		49BDE9F2237DA1EA0087F729 /* HA Menu X Launcher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49BDE9E1237DA1580087F729 /* HA Menu X Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		49E61060218F4A2A00EFA408 /* StatusBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E6105F218F4A2A00EFA408 /* StatusBarViewController.swift */; };
 		49E61063218F5FF400EFA408 /* PrefsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E61062218F5FF400EFA408 /* PrefsViewController.swift */; };
 		49E61065218F605000EFA408 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E61064218F605000EFA408 /* Preferences.swift */; };
@@ -48,19 +44,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		49BDE9F1237DA1C40087F729 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = Contents/Library/LoginItems;
-			dstSubfolderSpec = 1;
-			files = (
-				49BDE9F2237DA1EA0087F729 /* HA Menu X Launcher.app in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		491F5299217CBF5200105921 /* HA Menu X.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HA Menu X.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		491F529C217CBF5200105921 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -79,12 +62,6 @@
 		49A5D39A246AD76100F81FAA /* RELEASING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = RELEASING.md; sourceTree = "<group>"; };
 		49BDE9D8237D75700087F729 /* HaEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HaEntity.swift; sourceTree = "<group>"; };
 		49BDE9DB237DA0FA0087F729 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		49BDE9E1237DA1580087F729 /* HA Menu X Launcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HA Menu X Launcher.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		49BDE9E3237DA1580087F729 /* LauncherAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherAppDelegate.swift; sourceTree = "<group>"; };
-		49BDE9E7237DA15A0087F729 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		49BDE9EA237DA15B0087F729 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		49BDE9EC237DA15B0087F729 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		49BDE9ED237DA15B0087F729 /* HA_Menu_Launcher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HA_Menu_Launcher.entitlements; sourceTree = "<group>"; };
 		49E6105F218F4A2A00EFA408 /* StatusBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarViewController.swift; sourceTree = "<group>"; };
 		49E61062218F5FF400EFA408 /* PrefsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrefsViewController.swift; sourceTree = "<group>"; };
 		49E61064218F605000EFA408 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
@@ -123,13 +100,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49BDE9DE237DA1580087F729 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -142,7 +112,6 @@
 				491F529B217CBF5200105921 /* HA Menu */,
 				491F52AE217CBF5400105921 /* HA MenuTests */,
 				491F52B9217CBF5400105921 /* HA MenuUITests */,
-				49BDE9E2237DA1580087F729 /* HA Menu Launcher */,
 				491F529A217CBF5200105921 /* Products */,
 				49BDE9DA237DA0FA0087F729 /* Frameworks */,
 			);
@@ -154,7 +123,6 @@
 				491F5299217CBF5200105921 /* HA Menu X.app */,
 				491F52AB217CBF5400105921 /* HA MenuTests.xctest */,
 				491F52B6217CBF5400105921 /* HA MenuUITests.xctest */,
-				49BDE9E1237DA1580087F729 /* HA Menu X Launcher.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -214,18 +182,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		49BDE9E2237DA1580087F729 /* HA Menu Launcher */ = {
-			isa = PBXGroup;
-			children = (
-				49BDE9E3237DA1580087F729 /* LauncherAppDelegate.swift */,
-				49BDE9E7237DA15A0087F729 /* Assets.xcassets */,
-				49BDE9E9237DA15A0087F729 /* Main.storyboard */,
-				49BDE9EC237DA15B0087F729 /* Info.plist */,
-				49BDE9ED237DA15B0087F729 /* HA_Menu_Launcher.entitlements */,
-			);
-			path = "HA Menu Launcher";
-			sourceTree = "<group>";
-		};
 		49E61061218F5B3500EFA408 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,7 +212,6 @@
 				491F5295217CBF5200105921 /* Sources */,
 				491F5296217CBF5200105921 /* Frameworks */,
 				491F5297217CBF5200105921 /* Resources */,
-				49BDE9F1237DA1C40087F729 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -306,23 +261,6 @@
 			productReference = 491F52B6217CBF5400105921 /* HA MenuUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		49BDE9E0237DA1580087F729 /* HA Menu Launcher */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 49BDE9EE237DA15B0087F729 /* Build configuration list for PBXNativeTarget "HA Menu Launcher" */;
-			buildPhases = (
-				49BDE9DD237DA1580087F729 /* Sources */,
-				49BDE9DE237DA1580087F729 /* Frameworks */,
-				49BDE9DF237DA1580087F729 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "HA Menu Launcher";
-			productName = "HA Menu Launcher";
-			productReference = 49BDE9E1237DA1580087F729 /* HA Menu X Launcher.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -352,9 +290,6 @@
 						LastSwiftMigration = 1120;
 						TestTargetID = 491F5298217CBF5200105921;
 					};
-					49BDE9E0237DA1580087F729 = {
-						CreatedOnToolsVersion = 11.2.1;
-					};
 				};
 			};
 			buildConfigurationList = 491F5294217CBF5200105921 /* Build configuration list for PBXProject "HA Menu" */;
@@ -374,7 +309,6 @@
 			projectRoot = "";
 			targets = (
 				491F5298217CBF5200105921 /* HA Menu */,
-				49BDE9E0237DA1580087F729 /* HA Menu Launcher */,
 				491F52AA217CBF5400105921 /* HA MenuTests */,
 				491F52B5217CBF5400105921 /* HA MenuUITests */,
 			);
@@ -404,15 +338,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		49BDE9DF237DA1580087F729 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49BDE9E8237DA15A0087F729 /* Assets.xcassets in Resources */,
-				49BDE9EB237DA15B0087F729 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,14 +377,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		49BDE9DD237DA1580087F729 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				49BDE9E4237DA1580087F729 /* LauncherAppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -480,14 +397,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				491F52A3217CBF5400105921 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		49BDE9E9237DA15A0087F729 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				49BDE9EA237DA15B0087F729 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -549,7 +458,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -608,7 +517,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -635,7 +544,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 2.7.1;
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.codechimp.HA-Menu";
@@ -662,7 +571,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 2.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.codechimp.HA-Menu";
 				PRODUCT_MODULE_NAME = HA_Menu;
@@ -761,60 +670,6 @@
 			};
 			name = Release;
 		};
-		49BDE9EF237DA15B0087F729 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "HA Menu Launcher/HA_Menu_Launcher.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 30;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = VZ3Z8BPWPW;
-				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = "HA Menu Launcher/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 2.7.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.codechimp.HA-Menu-Launcher";
-				PRODUCT_MODULE_NAME = HA_Menu_Launcher;
-				PRODUCT_NAME = "HA Menu X Launcher";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		49BDE9F0237DA15B0087F729 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "HA Menu Launcher/HA_Menu_Launcher.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 30;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = VZ3Z8BPWPW;
-				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = "HA Menu Launcher/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MARKETING_VERSION = 2.7.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.codechimp.HA-Menu-Launcher";
-				PRODUCT_MODULE_NAME = HA_Menu_Launcher;
-				PRODUCT_NAME = "HA Menu X Launcher";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -850,15 +705,6 @@
 			buildConfigurations = (
 				491F52C6217CBF5400105921 /* Debug */,
 				491F52C7217CBF5400105921 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		49BDE9EE237DA15B0087F729 /* Build configuration list for PBXNativeTarget "HA Menu Launcher" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				49BDE9EF237DA15B0087F729 /* Debug */,
-				49BDE9F0237DA15B0087F729 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

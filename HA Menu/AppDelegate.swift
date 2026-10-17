@@ -9,9 +9,7 @@
 import Cocoa
 import ServiceManagement
 
-let launcherAppId = "org.codechimp.HA-Menu-Launcher"
-
-@NSApplicationMain
+@main
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     var menuItemController: MenuItemController?
@@ -21,13 +19,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         setupPrefs()
 
-        // Kill the launcher Application
-        let runningApps = NSWorkspace.shared.runningApplications
-        let isRunning = !runningApps.filter { $0.bundleIdentifier == launcherAppId }.isEmpty
-
-        if isRunning {
-            DistributedNotificationCenter.default().post(name: .killLauncher,
-                                                         object: Bundle.main.bundleIdentifier!)
+        // Unit tests run inside the app with the user's real settings, keep their login item alone
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil {
+            migrateLoginItem()
+            updateLoginItemLocation()
         }
 
         menuItemController = MenuItemController()
@@ -37,11 +32,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
 }
-
-extension Notification.Name {
-    static let killLauncher = Notification.Name("killLauncher")
-}
-
 
 extension AppDelegate {
     // MARK: - Preferences
@@ -59,18 +49,52 @@ extension AppDelegate {
                "domain_buttons": true,
                "domain_inputbuttons": true
                ])
+    }
 
-        let notificationName = Notification.Name(rawValue: "PrefsChanged")
-        NotificationCenter.default.addObserver(forName: notificationName,
-                                               object: nil, queue: nil) {
-                                                (notification) in
-                                                self.updateFromPrefs()
+    // Up to version 2 start at login used a helper app and stored the setting in "launch".
+    // Since 3.0 the app registers itself as login item, move existing users over once.
+    func migrateLoginItem() {
+        let defaults = UserDefaults.standard
+        guard defaults.object(forKey: "launch") != nil else {
+            return
         }
+
+        if defaults.bool(forKey: "launch") {
+            // Stop an old HA Menu copy that is still around from starting at login as well
+            (LegacyLoginItem() as LegacyLoginItemDisabling).disableHelper()
+            prefs.launch = true
+        }
+        defaults.removeObject(forKey: "launch")
     }
 
-    func updateFromPrefs() {
-        SMLoginItemSetEnabled(launcherAppId as CFString, prefs.launch)
+    // The login item points to the app that registered it, follow the app when it was moved or replaced by a copy elsewhere
+    func updateLoginItemLocation() {
+        let service = SMAppService.mainApp
+        guard service.status == .enabled, UserDefaults.standard.string(forKey: "login_item_path") != Bundle.main.bundlePath else {
+            return
+        }
+
+        do {
+            try service.unregister()
+        }
+        catch {
+            print("Unable to move login item: \(error.localizedDescription)")
+            return
+        }
+        prefs.launch = true
     }
 
+}
+
+private protocol LegacyLoginItemDisabling {
+    func disableHelper()
+}
+
+// Called through the protocol so the deprecated API needed for this one time clean up does not warn on every build
+private struct LegacyLoginItem: LegacyLoginItemDisabling {
+    @available(macOS, deprecated: 13.0)
+    func disableHelper() {
+        SMLoginItemSetEnabled("org.codechimp.HA-Menu-Launcher" as CFString, false)
+    }
 }
 

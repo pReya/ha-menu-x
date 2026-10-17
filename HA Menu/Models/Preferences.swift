@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ServiceManagement
 
 struct Preferences {
 
@@ -45,13 +46,30 @@ struct Preferences {
         }
     }
 
+    // Start at login, read from and written to the system's login items so it stays in sync with System Settings
     var launch: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: "launch")
+            return SMAppService.mainApp.status == .enabled
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "launch")
-            UserDefaults.standard.synchronize()
+            let service = SMAppService.mainApp
+            do {
+                if newValue && service.status != .enabled {
+                    try service.register()
+                    UserDefaults.standard.set(Bundle.main.bundlePath, forKey: "login_item_path")
+                }
+                else if !newValue && service.status != .notRegistered {
+                    try service.unregister()
+                }
+            }
+            catch {
+                print("Unable to change login item: \(error.localizedDescription)")
+            }
+
+            // Turned off by the user in System Settings before, it has to be turned on there again
+            if newValue && service.status == .requiresApproval {
+                SMAppService.openSystemSettingsLoginItems()
+            }
         }
     }
 

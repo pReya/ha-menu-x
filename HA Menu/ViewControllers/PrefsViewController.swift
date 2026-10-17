@@ -26,6 +26,7 @@ class PrefsViewController: NSViewController {
     var groups = [HaEntity]()
     var menuItems = [PrefMenuItem]()
     var okToSaveMenuItems = false
+    var launchShown = false
     private var dragDropType = NSPasteboard.PasteboardType(rawValue: "private.table-row")
 
 
@@ -110,13 +111,20 @@ class PrefsViewController: NSViewController {
     func showExistingPrefs() {
         textfieldServer.stringValue = prefs.server
         textfieldToken.stringValue = prefs.token
-        buttonLogin.state = (prefs.launch == true ? .on : .off)
+        launchShown = prefs.launch
+        buttonLogin.state = (launchShown ? .on : .off)
     }
 
     func saveNewPrefs() {
         prefs.server = textfieldServer.stringValue
         prefs.token = textfieldToken.stringValue
-        prefs.launch = (buttonLogin.state == .on)
+
+        // Only touch the login item when the checkbox was changed, it can also be changed in System Settings
+        let launch = (buttonLogin.state == .on)
+        if launch != launchShown {
+            prefs.launch = launch
+            launchShown = launch
+        }
 
         NotificationCenter.default.post(name: Notification.Name(rawValue: "PrefsChanged"),
                                         object: nil)

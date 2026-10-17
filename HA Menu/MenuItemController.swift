@@ -110,36 +110,20 @@ final class MenuItemController: NSObject, NSMenuDelegate {
     }
 
     @objc func openHA(sender: NSMenuItem) {
+        // Prefer the Home Assistant Mac app, fall back to the website
+        let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "io.robbie.HomeAssistant")
+            ?? URL(fileURLWithPath: "/Applications/Home Assistant.app", isDirectory: true)
 
-        if #available(OSX 10.15, *) {
-            let url = NSURL(fileURLWithPath: "/Applications/Home Assistant.app", isDirectory: true) as URL
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.promptsUserIfNeeded = false
 
-            let path = "/bin"
-            let configuration = NSWorkspace.OpenConfiguration()
-            configuration.arguments = [path]
-            configuration.promptsUserIfNeeded = false
-
-            NSWorkspace.shared.openApplication(at: url,
-                                               configuration: configuration) { (app, error) in
-                                                if error != nil {
-                                                    // Fallback to opening website
-                                                    NSWorkspace.shared.open(NSURL(string: self.prefs.server)! as URL)
-                                                }
+        NSWorkspace.shared.openApplication(at: appURL, configuration: configuration) { (app, error) in
+            if error != nil, let serverURL = URL(string: self.prefs.server) {
+                NSWorkspace.shared.open(serverURL)
             }
-
-        } else {
-            // Fallback on earlier versions
-            if !NSWorkspace.shared.launchApplication("Home Assistant") {
-                // Fallback to opening website
-                NSWorkspace.shared.open(NSURL(string: self.prefs.server)! as URL)
-            }
-
         }
-
     }
 
-
-    
     @objc func openAbout(sender: NSMenuItem) {
         let options = [String: Any]()
         NSApp.orderFrontStandardAboutPanel(options)
