@@ -205,6 +205,16 @@ struct Preferences {
         }
     }
 
+    var hiddenEntities: [String] {
+        get {
+            return UserDefaults.standard.stringArray(forKey: "hidden_entities") ?? []
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "hidden_entities")
+            UserDefaults.standard.synchronize()
+        }
+    }
+
     var menuItems: [PrefMenuItem] {
         get {
             var decodedResponse = [PrefMenuItem]()

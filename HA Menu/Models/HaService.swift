@@ -100,11 +100,12 @@ class HaService {
 
     func filterEntities(entityDomain: String) -> [HaEntity] {
         var entities = [HaEntity]()
+        let hiddenEntities = prefs.hiddenEntities
 
         for haState in haStates {
             if (haState.entityId.starts(with: entityDomain + ".")) {
-                // Do not add unavailable state entities
-                if (haState.state != "unavailable") {
+                // Do not add unavailable state entities or ones the user has hidden
+                if (haState.state != "unavailable" && !hiddenEntities.contains(haState.entityId)) {
 
                     let haEntity: HaEntity = HaEntity(entityId: haState.entityId, friendlyName: (haState.attributes.friendlyName), state: (haState.state), unitOfMeasurement: haState.attributes.unitOfMeasurement, options: haState.attributes.options)
 

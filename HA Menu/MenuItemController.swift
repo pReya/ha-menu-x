@@ -23,9 +23,11 @@ final class MenuItemController: NSObject, NSMenuDelegate {
     
     var preferences: Preferences
 
+    let menuItemPreferences = 994
     let menuItemAbout = 995
     let menuItemTypeTopLevel = 996
     let menuItemTypeInfo = 997
+    let menuItemTypeHidden = 998
     let menuItemTypeError = 999
 
     let releasesFeedURL = URL(string: "https://hamenu-releases-atom.codechimp.org")!
@@ -83,6 +85,7 @@ final class MenuItemController: NSObject, NSMenuDelegate {
         menu.addItem(NSMenuItem.separator())
 
         let prefMenu = NSMenuItem(title: "Preferences", action: #selector(openPreferences(sender:)), keyEquivalent: ",")
+        prefMenu.tag = menuItemPreferences
         prefMenu.target = self
         menu.addItem(prefMenu)
         
@@ -179,6 +182,7 @@ final class MenuItemController: NSObject, NSMenuDelegate {
                         nextRequiresSeparator = self.addMenuItem(menuItem: menuItem, requiresSeparator: nextRequiresSeparator)
                     }
                 }
+                self.addHiddenEntitiesMenuItem()
                 completionHandler(.success(true))
 
             case .failure(let haServiceApiError):
@@ -270,8 +274,8 @@ final class MenuItemController: NSObject, NSMenuDelegate {
                                         unitOfMeasurement = entity.attributes.unitOfMeasurement
                                     }
                                     
-                                    // Do not add unavailable state entities
-                                    if (entity.state != "unavailable") {
+                                    // Do not add unavailable state entities or ones the user has hidden
+                                    if (entity.state != "unavailable" && !self.prefs.hiddenEntities.contains(entityId)) {
 
                                         let haEntity: HaEntity = HaEntity(entityId: entityId, friendlyName: (entity.attributes.friendlyName), state: (entity.state), unitOfMeasurement: unitOfMeasurement, options: options)
 
@@ -340,6 +344,7 @@ final class MenuItemController: NSObject, NSMenuDelegate {
             let inputSelectMenuItem = NSMenuItem()
             inputSelectMenuItem.title = haEntity.friendlyName
             inputSelectMenuItem.tag = haEntity.type.rawValue
+            self.addHideEntityMenuItem(parent: parent, haEntity: haEntity)
             parent.insertItem(inputSelectMenuItem, at: 0)
 
             let subMenu = NSMenu()
@@ -404,7 +409,57 @@ final class MenuItemController: NSObject, NSMenuDelegate {
             //        menuItem.image = NSImage(named: "StatusBarButtonImage")
             //        menuItem.offStateImage = NSImage(named: "NSMenuOnStateTemplate")
 
+            self.addHideEntityMenuItem(parent: parent, haEntity: haEntity)
             parent.insertItem(menuItem, at: 0)
+        }
+    }
+
+    // Alternate of the entity's own menu item, shown in its place while Option is held.
+    // Has to be inserted before the entity's item so it ends up directly below it.
+    func addHideEntityMenuItem(parent: NSMenu, haEntity: HaEntity) {
+        let hideMenuItem = NSMenuItem(title: "Hide " + haEntity.friendlyName, action: #selector(self.hideEntity(_:)), keyEquivalent: "")
+        hideMenuItem.target = self
+        hideMenuItem.isAlternate = true
+        hideMenuItem.keyEquivalentModifierMask = [.option]
+        hideMenuItem.representedObject = haEntity
+        hideMenuItem.tag = haEntity.type.rawValue // Tag defines what type of item it is
+
+        parent.insertItem(hideMenuItem, at: 0)
+    }
+
+    func addHiddenEntitiesMenuItem() {
+        DispatchQueue.main.async {
+            let hiddenEntities = self.prefs.hiddenEntities
+
+            if hiddenEntities.count == 0 {
+                return
+            }
+
+            let topMenuItem = NSMenuItem()
+            topMenuItem.title = "Hidden Entities"
+            topMenuItem.tag = self.menuItemTypeHidden
+
+            let subMenu = NSMenu()
+
+            var menuItems = [NSMenuItem]()
+            for entityId in hiddenEntities {
+                // Entities that no longer exist in HA are listed by their id so they can still be removed
+                let friendlyName = self.haService.haStates.first(where: {$0.entityId == entityId})?.attributes.friendlyName ?? entityId
+
+                let menuItem = NSMenuItem(title: "Show " + friendlyName, action: #selector(self.unhideEntity(_:)), keyEquivalent: "")
+                menuItem.target = self
+                menuItem.toolTip = entityId
+                menuItem.representedObject = entityId
+                menuItems.append(menuItem)
+            }
+
+            for menuItem in menuItems.sorted(by: {$0.title < $1.title}) {
+                subMenu.addItem(menuItem)
+            }
+
+            let position = self.menu.indexOfItem(withTag: self.menuItemPreferences) + 1
+            self.menu.insertItem(topMenuItem, at: position)
+            self.menu.setSubmenu(subMenu, for: topMenuItem)
         }
     }
 
@@ -452,6 +507,14 @@ final class MenuItemController: NSObject, NSMenuDelegate {
             }
         } while dynamicItem != nil
 
+        // Hidden Entities
+        repeat {
+            dynamicItem = self.menu.item(withTag: self.menuItemTypeHidden)
+            if (dynamicItem != nil) {
+                self.menu.removeItem(dynamicItem!)
+            }
+        } while dynamicItem != nil
+
         // Errors
         repeat {
             dynamicItem = self.menu.item(withTag: self.menuItemTypeError)
@@ -490,6 +553,21 @@ final class MenuItemController: NSObject, NSMenuDelegate {
         haService.pressEntity(haEntity: haEntity)
     }
     
+    @objc func hideEntity(_ sender: NSMenuItem) {
+        let haEntity: HaEntity = sender.representedObject as! HaEntity
+        var hiddenEntities = prefs.hiddenEntities
+
+        if !hiddenEntities.contains(haEntity.entityId) {
+            hiddenEntities.append(haEntity.entityId)
+            prefs.hiddenEntities = hiddenEntities
+        }
+    }
+
+    @objc func unhideEntity(_ sender: NSMenuItem) {
+        let entityId = sender.representedObject as! String
+        prefs.hiddenEntities = prefs.hiddenEntities.filter({$0 != entityId})
+    }
+
     func checkForUpdate() {
         let parser = FeedParser(URL: releasesFeedURL)
 

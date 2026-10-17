@@ -45,6 +45,11 @@ Within the preference screen you can choose which domains to display.  Domains a
 If you want to display just a few items from a domain, create a custom group as detailed below.   
 Entities within domains are displayed alphabetically.
 
+### Hiding entities
+
+To hide a single entity, open HA Menu and hold the Option (⌥) key, each entity turns into a Hide item, click it to hide that entity.  
+Hidden entities are removed from both domains and groups and are listed in the Hidden Entities submenu below Preferences, click one there to show it again.
+
 ### Groups
 
 If you have a lot of entities within your domains you can have HA Menu display a specific set by [creating new groups within HA](https://www.home-assistant.io/integrations/group/).  
