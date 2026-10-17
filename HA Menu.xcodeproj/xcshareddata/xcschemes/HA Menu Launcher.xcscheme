@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "49BDE9E0237DA1580087F729"
-               BuildableName = "HA Menu Launcher.app"
+               BuildableName = "HA Menu X Launcher.app"
                BlueprintName = "HA Menu Launcher"
                ReferencedContainer = "container:HA Menu.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "49BDE9E0237DA1580087F729"
-            BuildableName = "HA Menu Launcher.app"
+            BuildableName = "HA Menu X Launcher.app"
             BlueprintName = "HA Menu Launcher"
             ReferencedContainer = "container:HA Menu.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "49BDE9E0237DA1580087F729"
-            BuildableName = "HA Menu Launcher.app"
+            BuildableName = "HA Menu X Launcher.app"
             BlueprintName = "HA Menu Launcher"
             ReferencedContainer = "container:HA Menu.xcodeproj">
          </BuildableReference>

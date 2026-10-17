@@ -1,6 +1,6 @@
 //
 //  HA_MenuTests.swift
-//  HA MenuTests
+//  HA Menu XTests
 //
 //  Created by Andrew Jackson on 21/10/2018.
 //  Copyright © 2018 CodeChimp. All rights reserved.

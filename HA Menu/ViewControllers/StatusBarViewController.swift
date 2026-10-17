@@ -1,6 +1,6 @@
 //
 //  StatusBarViewController.swift
-//  HA Menu
+//  HA Menu X
 //
 //  Created by Andrew Jackson on 04/11/2018.
 //  Copyright © 2018 CodeChimp. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  MenuItemController
-//  HA Menu
+//  HA Menu X
 //
 //  Created by Andrew Jackson on 07/11/2018.
 //  Copyright © 2018 CodeChimp. All rights reserved.
@@ -95,13 +95,13 @@ final class MenuItemController: NSObject, NSMenuDelegate {
         openHaMenu.target = self
         menu.addItem(openHaMenu)
         
-        let openAbout = NSMenuItem(title: "About HA Menu", action: #selector(openAbout(sender:)), keyEquivalent: "")
+        let openAbout = NSMenuItem(title: "About HA Menu X", action: #selector(openAbout(sender:)), keyEquivalent: "")
         openAbout.tag = menuItemAbout
         openAbout.target = self
         menu.addItem(openAbout)
         
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit HA Menu", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Quit HA Menu X", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         
     }
 
