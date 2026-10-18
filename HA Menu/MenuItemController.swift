@@ -58,21 +58,31 @@ final class MenuItemController: NSObject, NSMenuDelegate {
         statusItem.menu = menu
         
         menu.delegate = self
+
+        refreshMenu()
     }
 
     public func menuWillOpen(_ menu: NSMenu){
         // Dirty fix for Sonoma which doesn't like menu items being changed during WillOpen
         DispatchQueue.main.async {
-            self.removeDynamicMenuItems()
+            self.refreshMenu()
+        }
+    }
 
-            self.addDynamicMenuItems(){
-                result in
-                switch result {
-                case .success( _):
-                    self.checkForUpdate()
-                case .failure( _):
-                    break
-                }
+    // Rebuilds the entity part of the menu with fresh states.
+    // macOS lays the menu out (width, check mark and image column) when it opens, so items added while it is open
+    // can end up truncated or misaligned. Therefore the menu is also built before it is opened the first time
+    // and after the preferences changed, the refresh on opening then only updates items that are already laid out.
+    func refreshMenu() {
+        removeDynamicMenuItems()
+
+        addDynamicMenuItems(){
+            result in
+            switch result {
+            case .success( _):
+                self.checkForUpdate()
+            case .failure( _):
+                break
             }
         }
     }
@@ -136,6 +146,9 @@ final class MenuItemController: NSObject, NSMenuDelegate {
         if let windowController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("PrefsWindowController")) as? NSWindowController
         {
             NSApp.runModal(for: windowController.window!)
+
+            // Menu items or their order may have changed
+            refreshMenu()
 
             NSApp.activate(ignoringOtherApps: true)
         }
