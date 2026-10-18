@@ -1,0 +1,71 @@
+name: Build
+
+# Builds the app on every push and pull request.
+# Pushing a version tag (e.g. 3.1.0 or 3.1.0beta) also attaches HA.Menu.X.zip to a draft release for that tag,
+# creating the draft if it does not exist yet.
+
+on:
+  push:
+    branches: [main]
+    tags: ["[0-9]+.[0-9]+.[0-9]+*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    permissions:
+      contents: write # needed to create the draft release on tag pushes
+
+    env:
+      APP: build/DerivedData/Build/Products/Release/HA Menu X.app
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build
+        run: |
+          xcodebuild -project "HA Menu.xcodeproj" -scheme "HA Menu" -configuration Release \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="" \
+            clean build
+
+      - name: Check app
+        run: |
+          codesign --verify --deep --strict "$APP"
+          echo "Version $(defaults read "$PWD/$APP/Contents/Info.plist" CFBundleShortVersionString), architectures $(lipo -archs "$APP/Contents/MacOS/HA Menu X")"
+
+      - name: Check version matches tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version=$(defaults read "$PWD/$APP/Contents/Info.plist" CFBundleShortVersionString)
+          tag="${GITHUB_REF_NAME%beta}"
+          if [ "$version" != "$tag" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match the app version $version, update MARKETING_VERSION first"
+            exit 1
+          fi
+
+      - name: Zip app
+        run: ditto -c -k --keepParent "$APP" HA.Menu.X.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: HA.Menu.X
+          path: HA.Menu.X.zip
+
+      - name: Attach to draft release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" HA.Menu.X.zip --clobber
+          else
+            prerelease=""
+            case "$TAG" in *beta) prerelease="--prerelease" ;; esac
+            gh release create "$TAG" HA.Menu.X.zip --draft $prerelease --verify-tag --title "HA Menu X $TAG" --generate-notes
+          fi
