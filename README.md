@@ -106,6 +106,6 @@ ha_menu:
     - sensor.outside_temperature
 ```
 
-[license-shield]: https://img.shields.io/github/license/pReya/ha-menu-x.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/pReya/ha-menu-x.svg?style=for-the-badge
-[download-latest-shield]: https://img.shields.io/github/downloads/pReya/ha-menu-x/latest/total?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/pReya/ha-menu-x?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/v/release/pReya/ha-menu-x?style=for-the-badge
+[download-latest-shield]: https://img.shields.io/github/downloads/pReya/ha-menu-x/total?style=for-the-badge
