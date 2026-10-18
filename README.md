@@ -6,7 +6,7 @@
 
 ![Logo](Art/logo.png)
 
-A MacOS Menu Bar app to perform common Home Assistant functions.
+A MacOS Menu Bar app to control common Home Assistant functions.
 
 HA Menu X is a fork of [HA Menu](https://github.com/codechimp-org/ha-menu) by [Andrew Jackson / CodeChimp](https://github.com/andrew-codechimp). All the credit for the original app goes to them, HA Menu X builds on it with the features below.
 
@@ -16,7 +16,6 @@ HA Menu X is a fork of [HA Menu](https://github.com/codechimp-org/ha-menu) by [A
 * **Sort items** – Drag the entities within any domain, group or area into the order you want instead of the fixed alphabetical/group order. See [Sorting items](#sorting-items).
 * **Hide entities** – Hold the Option (⌥) key in the menu to hide single entities, and bring them back from the Hidden Entities submenu. See [Hiding entities](#hiding-entities).
 * **Dark mode icons** – The play and sensor icons follow the menu's light/dark appearance.
-* **Update notifications for this fork** – New versions are checked against the [HA Menu X releases](https://github.com/pReya/ha-menu-x/releases) and only newer versions are offered.
 * **Built for current macOS** – Requires macOS 13 (Ventura) or later and is built with the current macOS SDK. Start at login now uses the system's login items: HA Menu X shows up in System Settings > General > Login Items like any other app, with no separate helper app, and the setting stays in sync when you change it there.
 
 HA Menu X uses the same settings as HA Menu, so when switching your server, token and menu setup are kept.
@@ -34,7 +33,7 @@ HA Menu X uses the same settings as HA Menu, so when switching your server, toke
 
 HA Menu X supports MacOS 13 (Ventura) and later, on Apple Silicon and Intel Macs.
 
-![alt text](Art/menu.png "HA Menu X")
+<img src="Art/menu.png" width="365" alt="HA Menu X menu with rooms as submenus">
 
 ## Installation
 **Manual**  
@@ -55,7 +54,7 @@ Under Long Lived Access Tokens, create a new token, give it a name and copy the 
 
 Press Connect to validate your connection and get your groups and areas.  You can now choose which domains/groups/areas to display within HA Menu X, drag them to reorder and optionally make them a submenu. Double-click one to sort the entities within it.
 
-![alt text](Art/preferences.png "Preferences")
+<img src="Art/preferences.png" width="537" alt="HA Menu X preferences">
 
 ### Domains
 
@@ -106,11 +105,6 @@ ha_menu:
     - input_select.who_cooks
     - sensor.outside_temperature
 ```
-
-## Say Thanks
-If you would like to show your support for the original HA Menu
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/codechimp)
 
 [license-shield]: https://img.shields.io/github/license/pReya/ha-menu-x.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/pReya/ha-menu-x.svg?style=for-the-badge
